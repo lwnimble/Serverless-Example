@@ -35,9 +35,9 @@ namespace ProductsApi
             var ingredient = new Ingredient
             {
                 Id = Guid.NewGuid().ToString(),
-                Category = "Vegetable",
-                Name = "Leek",
-                Quantity = 2
+                Category = "Meat",
+                Name = "Steak",
+                Quantity = 4
             };
 
             var response = await _ingredientRepository.CreateProductAsync(ingredient);

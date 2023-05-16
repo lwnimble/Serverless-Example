@@ -7,7 +7,7 @@ namespace SharedLibrary.Repository
     {
         private readonly CosmosClient _cosmosClient;
         private readonly string _database;
-        private const string Container = "ingredient";
+        private const string Container = "ingredients";
 
         public IngredientRepository(CosmosClientFactory cosmosClientFactory)
         {

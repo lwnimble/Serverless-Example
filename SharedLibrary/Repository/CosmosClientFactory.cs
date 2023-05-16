@@ -1,4 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Options;
+using ProductsApi.DependencyInjection;
 
 namespace SharedLibrary.Repository
 {
@@ -6,13 +8,13 @@ namespace SharedLibrary.Repository
     {
         private readonly string _databaseUrl;
         private readonly string _databasePrimaryKey;
-        public string DatabaseName { get; private set; }
+        public string DatabaseName { get; }
 
-        public CosmosClientFactory(string databaseUrl, string databasePrimaryKey, string databaseName)
+        public CosmosClientFactory(IOptions<DatabaseConfig> databaseConfig)
         {
-            _databaseUrl = databaseUrl;
-            _databasePrimaryKey = databasePrimaryKey;
-            DatabaseName = databaseName;
+            _databaseUrl = databaseConfig.Value.DatabaseURI;
+            _databasePrimaryKey = databaseConfig.Value.DatabasePrimaryKey;
+            DatabaseName = databaseConfig.Value.DatabaseName;
         }
 
         public CosmosClient CreateClient()
