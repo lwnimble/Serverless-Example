@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductsApi", "ProductsApi\ProductsApi.csproj", "{3C8BDFB1-62A4-4141-A38D-5A44AA245F55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedLibrary", "SharedLibrary\SharedLibrary.csproj", "{15538502-24B1-47D3-A7C3-207A4090D3B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C1F106FC-9251-43F4-9B9C-64DEFD307BD4}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		ProductsApi\.gitignore = ProductsApi\.gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3C8BDFB1-62A4-4141-A38D-5A44AA245F55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C8BDFB1-62A4-4141-A38D-5A44AA245F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C8BDFB1-62A4-4141-A38D-5A44AA245F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C8BDFB1-62A4-4141-A38D-5A44AA245F55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15538502-24B1-47D3-A7C3-207A4090D3B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15538502-24B1-47D3-A7C3-207A4090D3B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15538502-24B1-47D3-A7C3-207A4090D3B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15538502-24B1-47D3-A7C3-207A4090D3B3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {40805FF8-6BC5-4685-B6BA-3DC2BB053B6D}
+	EndGlobalSection
+EndGlobal
