@@ -12,7 +12,7 @@ using SharedLibrary.Models;
 using SharedLibrary.Repository;
 using System;
 
-namespace ProductsApi
+namespace RecipeApiFunction
 {
     public class ProductsFunction
     {

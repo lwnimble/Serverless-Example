@@ -1,6 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
-using ProductsApi.DependencyInjection;
+using RecipeApiFunction.DependencyInjection;
 
 namespace SharedLibrary.Repository
 {

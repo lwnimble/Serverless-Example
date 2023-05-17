@@ -1,4 +1,4 @@
-﻿namespace ProductsApi.DependencyInjection
+﻿namespace RecipeApiFunction.DependencyInjection
 {
     public class DatabaseConfig
     {

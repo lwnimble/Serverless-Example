@@ -1,10 +1,10 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using ProductsApi.DependencyInjection;
+using RecipeApiFunction.DependencyInjection;
 
-[assembly: FunctionsStartup(typeof(ProductsApi.Startup))]
+[assembly: FunctionsStartup(typeof(RecipeApiFunction.Startup))]
 
-namespace ProductsApi
+namespace RecipeApiFunction
 {
     internal class Startup : FunctionsStartup
     {

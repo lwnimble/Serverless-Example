@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SharedLibrary.Repository;
 
-namespace ProductsApi.DependencyInjection
+namespace RecipeApiFunction.DependencyInjection
 {
     internal static class Extensions
     {
