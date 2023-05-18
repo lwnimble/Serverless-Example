@@ -44,7 +44,7 @@ namespace SharedLibrary.Repository
         {
             var container = GetContainer();
             var iterator = container.GetItemLinqQueryable<Ingredient>()
-                .Where(i => string.Equals(i.Category, category, StringComparison.CurrentCultureIgnoreCase))
+                .Where(i => i.Category.ToLower() == category.ToLower())
                 .ToFeedIterator();
 
             var ingredients = new List<Ingredient>();
