@@ -5,6 +5,8 @@ namespace SharedLibrary.Repository
 {
     public interface IIngredientRepository
     {
-        public Task<ItemResponse<Ingredient>> CreateProductAsync(Ingredient ingredient);
+        public Task<Ingredient> AddIngredient(Ingredient ingredient);
+
+        public Task<List<Ingredient>> GetAllIngredients();
     }
 }
