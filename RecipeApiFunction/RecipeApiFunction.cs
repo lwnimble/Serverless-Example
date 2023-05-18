@@ -28,13 +28,13 @@ namespace RecipeApiFunction
             _ingredientRepository = ingredientRepository;
         }
 
-        [FunctionName("PostIngredient")]
+        [FunctionName("AddIngredient")]
         [OpenApiOperation(operationId: "PostIngredient", tags: new[] { "name" })]
         [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Ingredient), Description = "The OK response")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "text/plain", bodyType: typeof(string), Description = "The BadRequest response")]
         public async Task<IActionResult> PostIngredient(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "ingredient")] HttpRequest req)
         {
             if (req.Headers.ContentLength == 0)
             {
@@ -54,19 +54,32 @@ namespace RecipeApiFunction
             return new OkObjectResult(response); 
         }
 
-        [FunctionName("GetIngredients")]
+        [FunctionName("GetAllIngredients")]
         [OpenApiOperation(operationId: "GetIngredients", tags: new[] { "name" })]
         [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code",
             In = OpenApiSecurityLocationType.Query)]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
             bodyType: typeof(List<Ingredient>), Description = "The OK response")]
         public async Task<IActionResult> GetIngredients(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient")]
             HttpRequest req)
         {
             var response = await _ingredientRepository.GetAllIngredients();
             return new OkObjectResult(response);
         }
+
+        [FunctionName("GetCategory")]
+        [OpenApiOperation(operationId: "GetIngredients", tags: new[] { "name" })]
+        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code",
+            In = OpenApiSecurityLocationType.Query)]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+            bodyType: typeof(List<Ingredient>), Description = "The OK response")]
+        public async Task<IActionResult> GetIngredientsForCategory(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient/{category:alpha}")] HttpRequest req,
+        string category)
+        {
+            var response = await _ingredientRepository.GetIngredientCategory(category);
+            return new OkObjectResult(response);
+        }
     }
 }
-

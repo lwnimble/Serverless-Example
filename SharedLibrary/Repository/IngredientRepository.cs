@@ -27,14 +27,31 @@ namespace SharedLibrary.Repository
         public async Task<List<Ingredient>> GetAllIngredients()
         {
             var container = GetContainer();
-            var queryable = container.GetItemLinqQueryable<Ingredient>();
-            var iterator = queryable.ToFeedIterator();
+            var iterator = container.GetItemLinqQueryable<Ingredient>()
+                .ToFeedIterator();
 
             var ingredients = new List<Ingredient>();
             while (iterator.HasMoreResults)
             {
                 var results = await iterator.ReadNextAsync();
                 ingredients.AddRange(results.Resource);
+            }
+
+            return ingredients;
+        }
+
+        public async Task<List<Ingredient>> GetIngredientCategory(string category)
+        {
+            var container = GetContainer();
+            var iterator = container.GetItemLinqQueryable<Ingredient>()
+                .Where(i => string.Equals(i.Category, category, StringComparison.CurrentCultureIgnoreCase))
+                .ToFeedIterator();
+
+            var ingredients = new List<Ingredient>();
+            while (iterator.HasMoreResults)
+            {
+                var results = await iterator.ReadNextAsync();
+                ingredients.AddRange(results);
             }
 
             return ingredients;

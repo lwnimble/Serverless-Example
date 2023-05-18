@@ -8,5 +8,7 @@ namespace SharedLibrary.Repository
         public Task<Ingredient> AddIngredient(Ingredient ingredient);
 
         public Task<List<Ingredient>> GetAllIngredients();
+
+        public Task<List<Ingredient>> GetIngredientCategory(string category);
     }
 }
