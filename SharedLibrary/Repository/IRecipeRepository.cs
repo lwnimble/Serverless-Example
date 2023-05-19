@@ -7,6 +7,6 @@ namespace SharedLibrary.Repository
         public Task<Recipe> AddRecipe(Recipe recipe);
         public Task<Recipe> UpdateRecipe(Recipe recipe);
         public Task<List<Recipe>> GetAllRecipes();
-        public Task<Recipe> GetRecipe(string id);
+        public Task<Recipe?> GetRecipe(string id, string nationality);
     }
 }
