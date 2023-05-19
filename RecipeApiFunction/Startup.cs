@@ -1,6 +1,8 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using RecipeApiFunction.DependencyInjection;
+using SharedLibrary.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(RecipeApiFunction.Startup))]
 
@@ -12,7 +14,8 @@ namespace RecipeApiFunction
         {
             var configuration = BuildConfiguration(builder.GetContext().ApplicationRootPath);
 
-            builder.Services.AddAppConfiguration(configuration)
+            builder.Services.AddSingleton(configuration)
+                .AddCosmosClient(configuration)
                 .AddFunctionServices();
         }
 

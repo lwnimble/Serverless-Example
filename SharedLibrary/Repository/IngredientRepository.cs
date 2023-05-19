@@ -1,33 +1,31 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using SharedLibrary.Models;
+using SharedLibrary.Utilities;
 
 namespace SharedLibrary.Repository
 {
     public class IngredientRepository : IIngredientRepository
     {
-        private readonly CosmosClient _cosmosClient;
-        private readonly string _database;
-        private const string Container = "ingredients";
 
-        public IngredientRepository(CosmosClientFactory cosmosClientFactory)
+        private readonly Container _container;
+        private const string Container = "ingredients";
+        private const string PartitionKey = "/Category";
+
+        public IngredientRepository(CosmosClientUtilities cosmosClientUtilities)
         {
-            _cosmosClient = cosmosClientFactory.CreateClient();
-            _database = cosmosClientFactory.DatabaseName;
+            _container = cosmosClientUtilities.GetContainer(Container, PartitionKey).Result;
         }
 
         public async Task<Ingredient> AddIngredient(Ingredient ingredient)
         {
-            Container container = GetContainer();
-
-            var response = await container.CreateItemAsync(ingredient);
+            var response = await _container.CreateItemAsync(ingredient);
             return response.Resource;
         }
 
         public async Task<List<Ingredient>> GetAllIngredients()
         {
-            var container = GetContainer();
-            var iterator = container.GetItemLinqQueryable<Ingredient>()
+            var iterator = _container.GetItemLinqQueryable<Ingredient>()
                 .ToFeedIterator();
 
             var ingredients = new List<Ingredient>();
@@ -42,8 +40,7 @@ namespace SharedLibrary.Repository
 
         public async Task<List<Ingredient>> GetIngredientCategory(string category)
         {
-            var container = GetContainer();
-            var iterator = container.GetItemLinqQueryable<Ingredient>()
+            var iterator = _container.GetItemLinqQueryable<Ingredient>()
                 .Where(i => i.Category.ToLower() == category.ToLower())
                 .ToFeedIterator();
 
@@ -55,13 +52,6 @@ namespace SharedLibrary.Repository
             }
 
             return ingredients;
-        }
-
-        private Container GetContainer()
-        {
-            var database = _cosmosClient.GetDatabase(id: _database);
-            var container = database.GetContainer(Container);
-            return container;
         }
     }
 }
