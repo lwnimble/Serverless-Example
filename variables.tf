@@ -17,3 +17,8 @@ variable "project" {
   type = string
   description = "project name"
 }
+
+variable "recipefunctionzip" {
+  type = string
+  description = "location of recipe function zip"
+}
