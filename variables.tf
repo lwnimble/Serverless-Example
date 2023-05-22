@@ -1,9 +1,19 @@
-variable "resource_group_location" {
-  default     = "westus"
+variable "location" {
+  type = string
   description = "Location of the resource group."
 }
 
 variable "resource_group_name" {
-  default     = "1-736e0060-playground-sandbox"
+  type = string
   description = "name of resource group"
+}
+
+variable "environment" {
+  type =  string
+  description = "environment name"
+}
+
+variable "project" {
+  type = string
+  description = "project name"
 }
