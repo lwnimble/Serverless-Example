@@ -4,7 +4,35 @@ data "archive_file" "file_function_app" {
   output_path = var.recipefunctionzip
 }
 
-resource "random_string" "random_string" {
+resource "random_string" "db_account_name" {
+  length  = 20
+  upper   = false
+  special = false
+  numeric = false
+}
+
+resource "azurerm_cosmosdb_account" "db_account" {
+  name = random_string.db_account_name.id
+  location = var.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+  offer_type = "Standard"
+  kind = "GlobalDocumentDB"
+  enable_automatic_failover = false
+  geo_location {
+    location = var.location
+    failover_priority = 0
+  }
+  consistency_policy {
+    consistency_level = "BoundedStaleness"
+    max_interval_in_seconds = 300
+    max_staleness_prefix = 100000
+  }
+  depends_on = [
+    azurerm_resource_group.resource_group
+  ]
+}
+
+resource "random_string" "storage_account_name" {
   length = 12
   special = false  
   numeric = false
@@ -16,7 +44,7 @@ resource "azurerm_resource_group" "resource_group" {
   name     = var.resource_group_name
 }
 
-resource "azurerm_storage_account" "storage_account" {
+resource "azurerm_storage_account" "storage_account_name" {
       name = "${random_string.random_string.id}storage"
       resource_group_name = azurerm_resource_group.resource_group.name
       location = var.location
@@ -95,6 +123,8 @@ resource "azurerm_function_app" "recipe_api_function" {
     "WEBSITE_RUN_FROM_PACKAGE" = "https://${azurerm_storage_account.storage_account.name}.blob.core.windows.net/${azurerm_storage_container.deployments.name}/${azurerm_storage_blob.storage_blob.name}${data.azurerm_storage_account_sas.sas.sas}"
     "FUNCTIONS_WORKER_RUNTIME" = "dotnet"
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.application_insights.instrumentation_key
+    "DatabaseName" = var.environment
+    "PrimaryConnectionString" = azurerm_cosmosdb_account.db_account.connection_strings[0]
   }
   os_type = "linux"
   site_config {}  
