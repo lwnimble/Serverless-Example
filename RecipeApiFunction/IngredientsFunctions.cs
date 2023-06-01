@@ -69,8 +69,9 @@ namespace RecipeApiFunction
             In = OpenApiSecurityLocationType.Query)]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
             bodyType: typeof(List<Ingredient>), Description = "The OK response")]
+        [OpenApiParameter("category", In = ParameterLocation.Path, Type = typeof(string), Description = "The **category** parameter", Required = true)]
         public async Task<IActionResult> GetIngredientsForCategory(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient/category/{category:alpha}")] 
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient/{category:alpha}")]
             HttpRequest req, string category)
         {
             var response = await _ingredientRepository.GetIngredientCategory(category);
@@ -83,8 +84,10 @@ namespace RecipeApiFunction
             In = OpenApiSecurityLocationType.Query)]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Ingredient), Description = "The OK response")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "The not found response")]
+        [OpenApiParameter("category", In = ParameterLocation.Path, Type = typeof(string), Description = "The **category** parameter", Required = true)]
+        [OpenApiParameter("id", In = ParameterLocation.Path, Type = typeof(string), Description = "The **id** parameter", Required = true)]
         public async Task<IActionResult> GetIngredient(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient/{category:alpha}/{id}")] 
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient/{category:alpha}/{id}")]
             HttpRequest req, string id, string category)
         {
             var response = await _ingredientRepository.GetIngredient(id, category);

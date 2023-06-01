@@ -13,3 +13,9 @@ output "cosmosdb_account_name" {
   description = "cosmos db account name" 
   sensitive = true
 }
+
+output "api_subscription_key" {
+  value = azurerm_api_management_subscription.ui_subscription.primary_key
+  description = "Primary key for api subscription"
+  sensitive = true
+}

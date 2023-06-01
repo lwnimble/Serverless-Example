@@ -73,6 +73,8 @@ namespace RecipeApiFunction
             In = OpenApiSecurityLocationType.Query)]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Ingredient), Description = "The OK response")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "The not found response")]
+        [OpenApiParameter("nationality", In = ParameterLocation.Path, Type = typeof(string), Description = "The **nationality** parameter", Required = true)]
+        [OpenApiParameter("id", In = ParameterLocation.Path, Type = typeof(string), Description = "The **id** parameter", Required = true)]
         public async Task<IActionResult> GetIngredient(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "recipe/{nationality:alpha}/{id}")]
             HttpRequest req, string id, string nationality)

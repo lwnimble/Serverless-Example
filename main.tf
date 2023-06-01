@@ -1,14 +1,33 @@
-data "archive_file" "file_function_app" {
-  type = "zip"
-  source_dir = "./publish/recipe-api-function"
-  output_path = var.recipefunctionzip
-}
+
 
 resource "random_string" "db_account_name" {
   length  = 20
   upper   = false
   special = false
   numeric = false
+}
+
+resource "random_string" "storage_account_name" {
+  length = 12
+  special = false  
+  numeric = false
+  upper = false
+}
+
+resource "random_string" "api_management_suffix" {
+  length = 12
+  special = false  
+  numeric = false
+  upper = false
+}
+
+resource "random_uuid" "user_id" {
+  
+}
+
+resource "azurerm_resource_group" "resource_group" {
+  location = var.location
+  name     = var.resource_group_name
 }
 
 resource "azurerm_cosmosdb_account" "db_account" {
@@ -32,20 +51,8 @@ resource "azurerm_cosmosdb_account" "db_account" {
   ]
 }
 
-resource "random_string" "storage_account_name" {
-  length = 12
-  special = false  
-  numeric = false
-  upper = false
-}
-
-resource "azurerm_resource_group" "resource_group" {
-  location = var.location
-  name     = var.resource_group_name
-}
-
-resource "azurerm_storage_account" "storage_account_name" {
-      name = "${random_string.random_string.id}storage"
+resource "azurerm_storage_account" "storage_account" {
+      name = "${random_string.storage_account_name.id}storage"
       resource_group_name = azurerm_resource_group.resource_group.name
       location = var.location
       account_tier = "Standard"
@@ -56,14 +63,6 @@ resource "azurerm_storage_container" "deployments" {
   name = "function-releases"
   storage_account_name = azurerm_storage_account.storage_account.name
   container_access_type = "private"
-}
-
-resource "azurerm_storage_blob" "storage_blob" {
-  name = "recipe-api-function.zip"
-  storage_account_name = azurerm_storage_account.storage_account.name
-  storage_container_name = azurerm_storage_container.deployments.name
-  type = "Block"
-  source = var.recipefunctionzip
 }
 
 data "azurerm_storage_account_sas" "sas" {
@@ -102,33 +101,38 @@ resource "azurerm_application_insights" "application_insights" {
   application_type = "web"
 }
 
-resource "azurerm_app_service_plan" "app_service_plan" {
-  name = "${var.project}-${var.environment}-app-service-plan"
-  resource_group_name = azurerm_resource_group.resource_group.name
+resource "azurerm_api_management" "api_management" {
+  name = "${var.project}-api-management-${random_string.api_management_suffix.id}"
   location = var.location
-  kind = "FunctionApp"
-  reserved = true
-  sku {
-    tier = "Dynamic"
-    size = "Y1"
-  }
+  resource_group_name = var.resource_group_name
+  publisher_name = "Lee Wilson"
+  publisher_email = "lee.wilson@nimbleapproach.com"
+  sku_name = "Developer_1"
 }
 
-resource "azurerm_function_app" "recipe_api_function" {
-  name = "${var.project}-${var.environment}-recipe-api-function"
+resource "azurerm_api_management_product" "shopping_list_product" {
+  product_id = "shoppinglistproduct"
+  api_management_name = azurerm_api_management.api_management.name
   resource_group_name = azurerm_resource_group.resource_group.name
-  location = var.location
-  app_service_plan_id = azurerm_app_service_plan.app_service_plan.id
-  app_settings = {
-    "WEBSITE_RUN_FROM_PACKAGE" = "https://${azurerm_storage_account.storage_account.name}.blob.core.windows.net/${azurerm_storage_container.deployments.name}/${azurerm_storage_blob.storage_blob.name}${data.azurerm_storage_account_sas.sas.sas}"
-    "FUNCTIONS_WORKER_RUNTIME" = "dotnet"
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.application_insights.instrumentation_key
-    "DatabaseName" = var.environment
-    "PrimaryConnectionString" = azurerm_cosmosdb_account.db_account.connection_strings[0]
-  }
-  os_type = "linux"
-  site_config {}  
-  storage_account_name = azurerm_storage_account.storage_account.name
-  storage_account_access_key = azurerm_storage_account.storage_account.primary_access_key
-  version = "~4"
+  display_name = "Shopping List Product"
+  subscription_required = true
+  approval_required = false
+  published = true
+}
+
+resource "azurerm_api_management_user" "ui_user" {
+  api_management_name = azurerm_api_management.api_management.name
+  resource_group_name = var.resource_group_name
+  user_id = random_uuid.user_id.id
+  first_name = "Lee"
+  last_name = "Wilson"
+  email = "lee.wilson+ui@nimbleapproach.com"
+}
+
+resource "azurerm_api_management_subscription" "ui_subscription" {
+  api_management_name = azurerm_api_management.api_management.name
+  resource_group_name = var.resource_group_name
+  user_id = azurerm_api_management_user.ui_user.id
+  product_id = azurerm_api_management_product.shopping_list_product.id
+  display_name = "UI Subscription"
 }
