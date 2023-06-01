@@ -1,6 +1,6 @@
 data "archive_file" "file_function_app" {
   type = "zip"
-  source_dir = "./publish/recipe-api-function"
+  source_dir = "../publish/recipe-api-function"
   output_path = var.recipefunctionzip
 }
 
