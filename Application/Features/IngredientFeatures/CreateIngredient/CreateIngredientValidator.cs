@@ -6,9 +6,9 @@ namespace Application.Features.IngredientFeatures.CreateIngredient
     {
         public CreateIngredientValidator()
         {
-            RuleFor(x => x.Name).NotEmpty();
-            RuleFor(x => x.Category).NotEmpty();
-            RuleFor(x => x.Quantity).NotEmpty();
+            RuleFor(x => x.Name).NotEmpty().MinimumLength(2);
+            RuleFor(x => x.Category).NotEmpty().MinimumLength(2);
+            RuleFor(x => x.Quantity).NotEmpty().GreaterThan(0);
         }
     }
 }

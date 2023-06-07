@@ -1,6 +1,8 @@
-﻿using Application.Repositories;
+﻿using Application.Common.Exceptions;
+using Application.Repositories;
 using AutoMapper;
 using Domain.Entities;
+using FluentValidation;
 using MediatR;
 
 namespace Application.Features.IngredientFeatures.CreateIngredient
@@ -9,15 +11,23 @@ namespace Application.Features.IngredientFeatures.CreateIngredient
     {
         private readonly IIngredientRepository _ingredientRepository;
         private readonly IMapper _mapper;
+        private readonly IValidator<CreateIngredientRequest> _validator;
 
-        public CreateIngredientHandler(IIngredientRepository repository, IMapper mapper)
+        public CreateIngredientHandler(IIngredientRepository repository, IMapper mapper, IValidator<CreateIngredientRequest> validator)
         {
             _ingredientRepository = repository;
             _mapper = mapper;
+            _validator = validator;
         }
 
         public async Task<CreateIngredientResponse> Handle(CreateIngredientRequest request, CancellationToken cancellationToken)
-        {
+        { 
+            var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+            if (!validationResult.IsValid)
+            {
+                throw new BadRequestException(validationResult.Errors.Select(e => e.ErrorMessage).ToArray());
+            }
+            
             var ingredient = _mapper.Map<Ingredient>(request);
 
             if (string.IsNullOrEmpty(ingredient.Id))

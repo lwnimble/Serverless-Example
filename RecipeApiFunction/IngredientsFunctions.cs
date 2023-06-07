@@ -1,3 +1,4 @@
+using Application.Common.Exceptions;
 using Application.Features.IngredientFeatures.CreateIngredient;
 using Domain.Entities;
 using MediatR;
@@ -34,9 +35,16 @@ namespace RecipeApiFunction
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "ingredient")] 
             CreateIngredientRequest req, CancellationToken cancellationToken)
         {
-            var response = await _mediator.Send(req, cancellationToken);
-
-            return new OkObjectResult(response); 
+            try
+            {
+                var response = await _mediator.Send(req, cancellationToken);
+                return new OkObjectResult(response);
+            }
+            catch (BadRequestException exception)
+            {
+                return new BadRequestObjectResult(exception.Errors);
+            }
+            
         }
 
         //[FunctionName("GetAllIngredients")]
