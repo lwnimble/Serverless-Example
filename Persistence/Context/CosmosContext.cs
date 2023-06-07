@@ -3,12 +3,12 @@ using Microsoft.Extensions.Configuration;
 
 namespace SharedLibrary.Utilities
 {
-    public class CosmosClientUtilities
+    public class CosmosContext
     {
         private readonly CosmosClient _client;
         private readonly string _databaseName;
 
-        public CosmosClientUtilities(CosmosClient client, IConfiguration config)
+        public CosmosContext(CosmosClient client, IConfiguration config)
         {
             _databaseName = config["DatabaseName"];
             _client = client;

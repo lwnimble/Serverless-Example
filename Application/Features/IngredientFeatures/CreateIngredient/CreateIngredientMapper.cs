@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using Domain.Entities;
 
 namespace Application.Features.IngredientFeatures.CreateIngredient
 {
-    internal class CreateIngredientMapper
+    public sealed class CreateIngredientMapper : Profile
     {
+        public CreateIngredientMapper()
+        {
+            CreateMap<CreateIngredientRequest, Ingredient>();
+            CreateMap<Ingredient, CreateIngredientResponse>();
+        }
     }
 }

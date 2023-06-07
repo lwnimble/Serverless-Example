@@ -10,7 +10,7 @@ data "azurerm_function_app_host_keys" "recipe_api_key" {
 }
 
 resource "azurerm_function_app" "recipe_api_function" {
-  name                = "${var.project}-${var.environment}-recipe-api-function"
+  name                = "${var.project}-${var.environment}-${random_string.api_management_suffix.id}-recipe-api-function"
   resource_group_name = azurerm_resource_group.resource_group.name
   location            = var.location
   app_service_plan_id = azurerm_app_service_plan.app_service_plan.id

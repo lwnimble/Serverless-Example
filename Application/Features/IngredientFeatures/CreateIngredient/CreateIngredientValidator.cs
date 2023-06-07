@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace Application.Features.IngredientFeatures.CreateIngredient
 {
-    internal class CreateIngredientValidator
+    public sealed class CreateIngredientValidator : AbstractValidator<CreateIngredientRequest>
     {
+        public CreateIngredientValidator()
+        {
+            RuleFor(x => x.Name).NotEmpty();
+            RuleFor(x => x.Category).NotEmpty();
+            RuleFor(x => x.Quantity).NotEmpty();
+        }
     }
 }

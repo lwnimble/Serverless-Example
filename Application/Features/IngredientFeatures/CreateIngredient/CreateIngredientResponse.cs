@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Features.IngredientFeatures.CreateIngredient
+﻿namespace Application.Features.IngredientFeatures.CreateIngredient
 {
-    internal class CreateIngredientResponse
+    public sealed record CreateIngredientResponse
     {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Category { get; set; }
+        public long Quantity{ get; set; }
     }
 }
