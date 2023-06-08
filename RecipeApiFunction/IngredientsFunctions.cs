@@ -2,6 +2,7 @@ using Application.Common.Behaviours;
 using Application.Common.Exceptions;
 using Application.Features.IngredientFeatures.CreateIngredient;
 using Application.Features.IngredientFeatures.GetAllIngredient;
+using Application.Features.IngredientFeatures.GetIngredient;
 using Application.Features.IngredientFeatures.GetIngredientsByCategory;
 using Domain.Entities;
 using FluentValidation;
@@ -16,6 +17,7 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -91,26 +93,29 @@ namespace RecipeApiFunction
             }
         }
 
-        //[FunctionName("GetIngredientById")]
-        //[OpenApiOperation(operationId: "GetIngredientById", tags: new[] { "Ingredients" })]
-        //[OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code",
-        //    In = OpenApiSecurityLocationType.Query)]
-        //[OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Ingredient), Description = "The OK response")]
-        //[OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "The not found response")]
-        //[OpenApiParameter("category", In = ParameterLocation.Path, Type = typeof(string), Description = "The **category** parameter", Required = true)]
-        //[OpenApiParameter("id", In = ParameterLocation.Path, Type = typeof(string), Description = "The **id** parameter", Required = true)]
-        //public async Task<IActionResult> GetIngredient(
-        //    [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient/{category:alpha}/{id}")]
-        //    HttpRequest req, string id, string category)
-        //{
-        //    var response = await _ingredientRepository.GetIngredient(id, category);
+        [FunctionName("GetIngredientById")]
+        [OpenApiOperation(operationId: "GetIngredientById", tags: new[] { "Ingredients" })]
+        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code",
+            In = OpenApiSecurityLocationType.Query)]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Ingredient), Description = "The OK response")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "The not found response")]
+        [OpenApiParameter("category", In = ParameterLocation.Path, Type = typeof(string), Description = "The **category** parameter", Required = true)]
+        [OpenApiParameter("id", In = ParameterLocation.Path, Type = typeof(string), Description = "The **id** parameter", Required = true)]
+        public async Task<IActionResult> GetIngredient(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient/{category:alpha}/{id}")]
+            HttpRequest req, string id, string category, CancellationToken cancellationToken)
+        {
+            var request = new GetIngredientRequest(id, category);
 
-        //    if (response == null)
-        //    {
-        //        return new NotFoundResult();
-        //    }
-
-        //    return new OkObjectResult(response);
-        //}
+            try
+            {
+                var response = await _mediator.Send(request, cancellationToken);
+                return new OkObjectResult(response);
+            }
+            catch (ValidationException ex)
+            {
+                return ex.ToBadRequestResponse();
+            }
+        }
     }
 }

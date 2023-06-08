@@ -45,10 +45,10 @@ namespace Persistence.Repositories
             await Update(entity);
         }
 
-        public async Task<T> Get(Guid id, string partitionKey, CancellationToken cancellationToken)
+        public async Task<T> Get(string id, string partitionKey, CancellationToken cancellationToken)
         { 
-            Logger.LogInformation("Getting id {id} with partition key {partitionKey} from container {container}", id.ToString(), partitionKey, Container.Id );
-            return await Container.ReadItemAsync<T>(id.ToString(), new PartitionKey(partitionKey), null, cancellationToken);
+            Logger.LogInformation("Getting id {id} with partition key {partitionKey} from container {container}", id, partitionKey, Container.Id );
+            return await Container.ReadItemAsync<T>(id, new PartitionKey(partitionKey), null, cancellationToken);
         }
 
         public async Task<List<T>> GetAll(CancellationToken cancellationToken)

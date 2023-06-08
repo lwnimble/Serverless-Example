@@ -9,7 +9,7 @@ namespace Persistence.Repositories
     {
 
         public IngredientRepository(CosmosContext cosmosContext, ILogger<IngredientRepository> logger)
-            : base(cosmosContext, "ingredients", "/Category", logger)
+            : base(cosmosContext, "ingredients", "/category", logger)
         {
         }
 

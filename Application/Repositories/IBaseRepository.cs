@@ -8,7 +8,7 @@ namespace Application.Repositories
         Task<T> Create(T entity);
         Task<T> Update(T entity);
         Task Delete(T entity);
-        Task<T> Get(Guid id, string partitionKey, CancellationToken cancellationToken);
+        Task<T> Get(string id, string partitionKey, CancellationToken cancellationToken);
         Task<List<T>> GetAll(CancellationToken cancellationToken);
     }
 }
