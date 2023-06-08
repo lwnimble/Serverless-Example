@@ -55,6 +55,7 @@ namespace Persistence.Repositories
         {
             Logger.LogInformation("Getting all entities in {container}", Container.Id);
             var iterator = Container.GetItemLinqQueryable<T>()
+                .Where(i => i.DateDeleted == default)
                 .ToFeedIterator();
 
             var items = new List<T>();
