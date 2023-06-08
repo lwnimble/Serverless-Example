@@ -74,6 +74,7 @@ namespace Persistence.Repositories
 
             var iterator = Container.GetItemLinqQueryable<T>()
                 .Where(findFunc)
+                .Where(i => i.DateDeleted == default)
                 .ToFeedIterator();
                 
 

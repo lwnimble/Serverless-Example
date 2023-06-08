@@ -16,7 +16,7 @@ namespace Persistence.Repositories
         public async Task<List<Ingredient>> GetByCategory(string category, CancellationToken cancellationToken)
         {
             Logger.LogInformation("Finding ingredients with category {category}", category);
-            return await GetByFunction(ingredient => ingredient.Category == category, cancellationToken);
+            return await GetByFunction(ingredient => ingredient.Category.ToLower() == category.ToLower(), cancellationToken);
         }
     }
 }

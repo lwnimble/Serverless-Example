@@ -1,6 +1,7 @@
 using Application.Common.Exceptions;
 using Application.Features.IngredientFeatures.CreateIngredient;
 using Application.Features.IngredientFeatures.GetAllIngredient;
+using Application.Features.IngredientFeatures.GetIngredientsByCategory;
 using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -65,20 +66,28 @@ namespace RecipeApiFunction
             return new OkObjectResult(response);
         }
 
-        //[FunctionName("GetIngredientsByCategory")]
-        //[OpenApiOperation(operationId: "GetByCategory", tags: new[] { "Ingredients" })]
-        //[OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code",
-        //    In = OpenApiSecurityLocationType.Query)]
-        //[OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
-        //    bodyType: typeof(List<Ingredient>), Description = "The OK response")]
-        //[OpenApiParameter("category", In = ParameterLocation.Path, Type = typeof(string), Description = "The **category** parameter", Required = true)]
-        //public async Task<IActionResult> GetIngredientsForCategory(
-        //    [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient/{category:alpha}")]
-        //    HttpRequest req, string category)
-        //{
-        //    var response = await _ingredientRepository.GetIngredientCategory(category);
-        //    return new OkObjectResult(response);
-        //}
+        [FunctionName("GetIngredientsByCategory")]
+        [OpenApiOperation(operationId: "GetByCategory", tags: new[] { "Ingredients" })]
+        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code",
+            In = OpenApiSecurityLocationType.Query)]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+            bodyType: typeof(List<Ingredient>), Description = "The OK response")]
+        [OpenApiParameter("category", In = ParameterLocation.Path, Type = typeof(string), Description = "The **category** parameter", Required = true)]
+        public async Task<IActionResult> GetIngredientsForCategory(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient/{category:alpha}")]
+            HttpRequest req, string category, CancellationToken cancellationToken)
+        {
+            var request = new GetIngredientsByCategoryRequest(category);
+            try
+            {
+                var response = await _mediator.Send(request, cancellationToken);
+                return new OkObjectResult(response);
+            }
+            catch (BadRequestException ex)
+            {
+                return new BadRequestObjectResult(ex.Errors);
+            }
+        }
 
         //[FunctionName("GetIngredientById")]
         //[OpenApiOperation(operationId: "GetIngredientById", tags: new[] { "Ingredients" })]
