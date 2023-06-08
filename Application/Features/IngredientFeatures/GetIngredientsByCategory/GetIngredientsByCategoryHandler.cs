@@ -22,12 +22,8 @@ namespace Application.Features.IngredientFeatures.GetIngredientsByCategory
 
         public async Task<List<GetIngredientsByCategoryResponse>> Handle(GetIngredientsByCategoryRequest request, CancellationToken cancellationToken)
         {
-            var validationResult = await _validator.ValidateAsync(request, cancellationToken);
-            if (!validationResult.IsValid)
-            {
-                throw new BadRequestException(validationResult.Errors.Select(e => e.ErrorMessage).ToArray());
-            }
-
+            await _validator.ValidateAndThrowAsync(request, cancellationToken);
+            
             var ingredients = await _repository.GetByCategory(request.CategoryName, cancellationToken);
 
             return _mapper.Map<List<GetIngredientsByCategoryResponse>>(ingredients);

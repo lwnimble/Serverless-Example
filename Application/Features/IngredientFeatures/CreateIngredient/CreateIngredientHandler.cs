@@ -22,11 +22,7 @@ namespace Application.Features.IngredientFeatures.CreateIngredient
 
         public async Task<CreateIngredientResponse> Handle(CreateIngredientRequest request, CancellationToken cancellationToken)
         { 
-            var validationResult = await _validator.ValidateAsync(request, cancellationToken);
-            if (!validationResult.IsValid)
-            {
-                throw new BadRequestException(validationResult.Errors.Select(e => e.ErrorMessage).ToArray());
-            }
+            await _validator.ValidateAndThrowAsync(request, cancellationToken);
             
             var ingredient = _mapper.Map<Ingredient>(request);
 

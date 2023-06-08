@@ -1,8 +1,10 @@
+using Application.Common.Behaviours;
 using Application.Common.Exceptions;
 using Application.Features.IngredientFeatures.CreateIngredient;
 using Application.Features.IngredientFeatures.GetAllIngredient;
 using Application.Features.IngredientFeatures.GetIngredientsByCategory;
 using Domain.Entities;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Net;
@@ -15,6 +17,7 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace RecipeApiFunction
@@ -44,11 +47,10 @@ namespace RecipeApiFunction
                 var response = await _mediator.Send(req, cancellationToken);
                 return new OkObjectResult(response);
             }
-            catch (BadRequestException exception)
+            catch (ValidationException ex)
             {
-                return new BadRequestObjectResult(exception.Errors);
+                return ex.ToBadRequestResponse();
             }
-            
         }
 
         [FunctionName("GetAllIngredients")]
@@ -83,9 +85,9 @@ namespace RecipeApiFunction
                 var response = await _mediator.Send(request, cancellationToken);
                 return new OkObjectResult(response);
             }
-            catch (BadRequestException ex)
+            catch (ValidationException ex)
             {
-                return new BadRequestObjectResult(ex.Errors);
+                return ex.ToBadRequestResponse();
             }
         }
 
