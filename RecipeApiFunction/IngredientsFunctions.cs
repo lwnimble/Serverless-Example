@@ -1,5 +1,4 @@
 using Application.Common.Behaviours;
-using Application.Common.Exceptions;
 using Application.Features.IngredientFeatures.CreateIngredient;
 using Application.Features.IngredientFeatures.GetAllIngredient;
 using Application.Features.IngredientFeatures.GetIngredient;
@@ -17,9 +16,7 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace RecipeApiFunction
