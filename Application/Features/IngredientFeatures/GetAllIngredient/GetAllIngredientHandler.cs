@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.IngredientFeatures.GetAllIngredient
 {
-    public sealed class GetAllIngredientHandler : IRequestHandler<GetAllIngredientRequest, List<GetAllIngredientResponse>>
+    public sealed class GetAllIngredientHandler : IRequestHandler<GetAllIngredientRequest, List<IngredientDto>>
     {
         private readonly IIngredientRepository _repository;
         private readonly IMapper _mapper;
@@ -15,11 +15,11 @@ namespace Application.Features.IngredientFeatures.GetAllIngredient
             _mapper = mapper;
         }
 
-        public async Task<List<GetAllIngredientResponse>> Handle(GetAllIngredientRequest request, CancellationToken cancellationToken)
+        public async Task<List<IngredientDto>> Handle(GetAllIngredientRequest request, CancellationToken cancellationToken)
         {
             var ingredients = await _repository.GetAll(cancellationToken);
 
-            return _mapper.Map<List<GetAllIngredientResponse>>(ingredients);
+            return _mapper.Map<List<IngredientDto>>(ingredients);
         }
     }
 }

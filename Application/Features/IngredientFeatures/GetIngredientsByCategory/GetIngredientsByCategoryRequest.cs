@@ -3,5 +3,5 @@
 namespace Application.Features.IngredientFeatures.GetIngredientsByCategory
 {
     public sealed record GetIngredientsByCategoryRequest(string CategoryName) 
-        : IRequest<List<GetIngredientsByCategoryResponse>>;
+        : IRequest<List<IngredientDto>>;
 }

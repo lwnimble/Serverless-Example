@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Application.Features.IngredientFeatures.CreateIngredient
 {
-    public sealed class CreateIngredientHandler : IRequestHandler<CreateIngredientRequest, CreateIngredientResponse>
+    public sealed class CreateIngredientHandler : IRequestHandler<CreateIngredientRequest, IngredientDto>
     {
         private readonly IIngredientRepository _ingredientRepository;
         private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ namespace Application.Features.IngredientFeatures.CreateIngredient
             _validator = validator;
         }
 
-        public async Task<CreateIngredientResponse> Handle(CreateIngredientRequest request, CancellationToken cancellationToken)
+        public async Task<IngredientDto> Handle(CreateIngredientRequest request, CancellationToken cancellationToken)
         { 
             await _validator.ValidateAndThrowAsync(request, cancellationToken);
             
@@ -33,7 +33,7 @@ namespace Application.Features.IngredientFeatures.CreateIngredient
 
             var createdIngredient = await _ingredientRepository.Create(ingredient);
 
-            return _mapper.Map<CreateIngredientResponse>(createdIngredient);
+            return _mapper.Map<IngredientDto>(createdIngredient);
         }
     }
 }

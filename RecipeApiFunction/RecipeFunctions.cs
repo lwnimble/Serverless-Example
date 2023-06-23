@@ -1,6 +1,8 @@
-﻿using Application.Repositories;
+﻿using Application.Common.Behaviours;
+using Application.Features.RecipeFeatures.CreateRecipe;
 using Domain.Entities;
-using Microsoft.AspNetCore.Http;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -8,50 +10,45 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using SharedLibrary.Utilities;
-using System;
-using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RecipeApiFunction
 {
     public class RecipeFunctions
     {
+        private readonly IMediator _mediator;
         private readonly ILogger<RecipeFunctions> _logger;
-        private readonly IRecipeRepository _recipeRepository;
 
-        public RecipeFunctions(ILogger<RecipeFunctions> logger, IRecipeRepository recipeRepository)
+        public RecipeFunctions(IMediator mediator, ILogger<RecipeFunctions> logger)
         {
+            _mediator = mediator;
             _logger = logger;
-            _recipeRepository = recipeRepository;
         }
 
-        //[FunctionName("AddRecipe")]
-        //[OpenApiOperation(operationId: "AddRecipe", tags: new[] { "Recipes" })]
-        //[OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code",
-        //    In = OpenApiSecurityLocationType.Query)]
-        //[OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
-        //    bodyType: typeof(Recipe), Description = "The OK response")]
-        //[OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "text/plain",
-        //    bodyType: typeof(string), Description = "The BadRequest response")]
-        //public async Task<IActionResult> PostRecipe(
-        //    [HttpTrigger(AuthorizationLevel.Function, "post", Route = "recipe")]
-        //    HttpRequest req)
-        //{
-        //    var validRequest = RequestValidationUtilities.ValidateRequest<Recipe>(req, out var recipe);
-
-        //    if (!validRequest)
-        //    {
-        //        return new BadRequestObjectResult("Invalid request. Body must contain a recipe");
-        //    }
-
-        //    recipe.Id ??= Guid.NewGuid().ToString();
-
-        //    var response = await _recipeRepository.AddRecipe(recipe);
-
-        //    return new OkObjectResult(response);
-        //}
+        [FunctionName("AddRecipe")]
+        [OpenApiOperation(operationId: "AddRecipe", tags: new[] { "Recipes" })]
+        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code",
+            In = OpenApiSecurityLocationType.Query)]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+            bodyType: typeof(Recipe), Description = "The OK response")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "text/plain",
+            bodyType: typeof(string), Description = "The BadRequest response")]
+        public async Task<IActionResult> PostRecipe(
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "recipe")]
+            CreateRecipeRequest req, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var response = await _mediator.Send(req, cancellationToken);
+                return new OkObjectResult(response);
+            }
+            catch (ValidationException ex)
+            {
+                return ex.ToBadRequestResponse();
+            }
+        }
 
         //[FunctionName("GetAllRecipes")]
         //[OpenApiOperation(operationId: "GetAllRecipes", tags: new[] { "Recipes" })]

@@ -7,7 +7,8 @@ namespace Application.Features.IngredientFeatures.GetIngredientsByCategory
     {
         public GetIngredientsByCategoryMapper()
         {
-            CreateMap<Ingredient, GetIngredientsByCategoryResponse>();
+            CreateMap<Ingredient, IngredientDto>();
+            CreateMap<IngredientDto, Ingredient>();
         }
     }
 }

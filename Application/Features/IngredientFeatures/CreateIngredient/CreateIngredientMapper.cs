@@ -8,7 +8,7 @@ namespace Application.Features.IngredientFeatures.CreateIngredient
         public CreateIngredientMapper()
         {
             CreateMap<CreateIngredientRequest, Ingredient>();
-            CreateMap<Ingredient, CreateIngredientResponse>();
+            CreateMap<Ingredient, IngredientDto>();
         }
     }
 }

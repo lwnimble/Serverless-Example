@@ -1,8 +1,6 @@
-﻿using Domain.Entities;
-
-namespace Application.Features.IngredientFeatures.GetAllIngredient
+﻿namespace Application.Features.IngredientFeatures
 {
-    public sealed record GetAllIngredientResponse
+    public sealed record IngredientDto
     {
         public string Id { get; set; }
         public string Name { get; set; }

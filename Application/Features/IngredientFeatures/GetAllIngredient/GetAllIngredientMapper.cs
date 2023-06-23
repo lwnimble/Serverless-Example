@@ -7,7 +7,7 @@ namespace Application.Features.IngredientFeatures.GetAllIngredient
     {
         public GetAllIngredientMapper()
         {
-            CreateMap<Ingredient, GetAllIngredientResponse>();
+            CreateMap<Ingredient, IngredientDto>();
         }
     }
 }

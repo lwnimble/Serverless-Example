@@ -16,7 +16,8 @@ namespace Persistence
             return services
                 .AddSingleton(service => new CosmosClient(configuration["PrimaryConnectionString"]))
                 .AddTransient<CosmosContext>()
-                .AddScoped<IIngredientRepository, IngredientRepository>();
+                .AddScoped<IIngredientRepository, IngredientRepository>()
+                .AddScoped<IRecipeRepository, RecipeRepository>();
         }
     }
 }

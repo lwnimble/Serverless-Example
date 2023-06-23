@@ -5,7 +5,7 @@ using SharedLibrary.Utilities;
 
 namespace Persistence.Repositories
 {
-    public class IngredientRepository : BaseRepository<Ingredient>, IIngredientRepository
+    public sealed class IngredientRepository : BaseRepository<Ingredient>, IIngredientRepository
     {
 
         public IngredientRepository(CosmosContext cosmosContext, ILogger<IngredientRepository> logger)

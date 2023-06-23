@@ -2,5 +2,5 @@
 
 namespace Application.Features.IngredientFeatures.GetAllIngredient
 {
-    public sealed record GetAllIngredientRequest : IRequest<List<GetAllIngredientResponse>>;
+    public sealed record GetAllIngredientRequest : IRequest<List<IngredientDto>>;
 }

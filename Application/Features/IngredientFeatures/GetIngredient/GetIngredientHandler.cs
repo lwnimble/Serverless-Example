@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Features.IngredientFeatures.GetIngredient
 {
-    public sealed class GetIngredientHandler : IRequestHandler<GetIngredientRequest, GetIngredientResponse>
+    public sealed class GetIngredientHandler : IRequestHandler<GetIngredientRequest, IngredientDto>
     {
         private readonly IIngredientRepository _repository;
         private readonly IMapper _mapper;
@@ -18,13 +18,13 @@ namespace Application.Features.IngredientFeatures.GetIngredient
             _validator = validator;
         }
 
-        public async Task<GetIngredientResponse> Handle(GetIngredientRequest request, CancellationToken cancellationToken)
+        public async Task<IngredientDto> Handle(GetIngredientRequest request, CancellationToken cancellationToken)
         {
             await _validator.ValidateAndThrowAsync(request, cancellationToken);
 
             var ingredient = await _repository.Get(request.Id, request.Category, cancellationToken);
 
-            return _mapper.Map<GetIngredientResponse>(ingredient);
+            return _mapper.Map<IngredientDto>(ingredient);
         }
     }
 }
