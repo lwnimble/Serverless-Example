@@ -1,5 +1,6 @@
 ﻿using Application.Common.Behaviours;
 using Application.Features.RecipeFeatures.CreateRecipe;
+using Application.Features.RecipeFeatures.GetAllRecipes;
 using Domain.Entities;
 using FluentValidation;
 using MediatR;
@@ -10,6 +11,7 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,19 +52,20 @@ namespace RecipeApiFunction
             }
         }
 
-        //[FunctionName("GetAllRecipes")]
-        //[OpenApiOperation(operationId: "GetAllRecipes", tags: new[] { "Recipes" })]
-        //[OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code",
-        //    In = OpenApiSecurityLocationType.Query)]
-        //[OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
-        //    bodyType: typeof(List<Ingredient>), Description = "The OK response")]
-        //public async Task<IActionResult> GetIngredients(
-        //    [HttpTrigger(AuthorizationLevel.Function, "get", Route = "recipe")]
-        //    HttpRequest req)
-        //{
-        //    var response = await _recipeRepository.GetAllRecipes();
-        //    return new OkObjectResult(response);
-        //}
+        [FunctionName("GetAllRecipes")]
+        [OpenApiOperation(operationId: "GetAllRecipes", tags: new[] { "Recipes" })]
+        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code",
+            In = OpenApiSecurityLocationType.Query)]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+            bodyType: typeof(List<Recipe>), Description = "The OK response")]
+        public async Task<IActionResult> GetIngredients(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "recipe")]
+            GetAllRecipesRequest req, CancellationToken cancellationToken)
+        {
+            var response = await _mediator.Send(req, cancellationToken);
+
+            return new OkObjectResult(response);
+        }
 
         //[FunctionName("GetRecipe")]
         //[OpenApiOperation(operationId: "GetRecipe", tags: new[] { "Recipes" })]
