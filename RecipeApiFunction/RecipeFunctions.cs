@@ -1,4 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Application.Common.Behaviours;
+using Application.Features.RecipeFeatures.CreateRecipe;
+using Application.Features.RecipeFeatures.GetAllRecipes;
+using Application.Features.RecipeFeatures.GetRecipe;
+using Domain.Entities;
+using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -6,25 +13,22 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using SharedLibrary.Models;
-using SharedLibrary.Repository;
-using SharedLibrary.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RecipeApiFunction
 {
     public class RecipeFunctions
     {
+        private readonly IMediator _mediator;
         private readonly ILogger<RecipeFunctions> _logger;
-        private readonly IRecipeRepository _recipeRepository;
 
-        public RecipeFunctions(ILogger<RecipeFunctions> logger, IRecipeRepository recipeRepository)
+        public RecipeFunctions(IMediator mediator, ILogger<RecipeFunctions> logger)
         {
+            _mediator = mediator;
             _logger = logger;
-            _recipeRepository = recipeRepository;
         }
 
         [FunctionName("AddRecipe")]
@@ -37,20 +41,17 @@ namespace RecipeApiFunction
             bodyType: typeof(string), Description = "The BadRequest response")]
         public async Task<IActionResult> PostRecipe(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "recipe")]
-            HttpRequest req)
+            CreateRecipeRequest req, CancellationToken cancellationToken)
         {
-            var validRequest = RequestValidationUtilities.ValidateRequest<Recipe>(req, out var recipe);
-
-            if (!validRequest)
+            try
             {
-                return new BadRequestObjectResult("Invalid request. Body must contain a recipe");
+                var response = await _mediator.Send(req, cancellationToken);
+                return new OkObjectResult(response);
             }
-
-            recipe.Id ??= Guid.NewGuid().ToString();
-
-            var response = await _recipeRepository.AddRecipe(recipe);
-
-            return new OkObjectResult(response);
+            catch (ValidationException ex)
+            {
+                return ex.ToBadRequestResponse();
+            }
         }
 
         [FunctionName("GetAllRecipes")]
@@ -58,12 +59,13 @@ namespace RecipeApiFunction
         [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code",
             In = OpenApiSecurityLocationType.Query)]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
-            bodyType: typeof(List<Ingredient>), Description = "The OK response")]
+            bodyType: typeof(List<Recipe>), Description = "The OK response")]
         public async Task<IActionResult> GetIngredients(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "recipe")]
-            HttpRequest req)
+            GetAllRecipesRequest req, CancellationToken cancellationToken)
         {
-            var response = await _recipeRepository.GetAllRecipes();
+            var response = await _mediator.Send(req, cancellationToken);
+
             return new OkObjectResult(response);
         }
 
@@ -77,16 +79,19 @@ namespace RecipeApiFunction
         [OpenApiParameter("id", In = ParameterLocation.Path, Type = typeof(string), Description = "The **id** parameter", Required = true)]
         public async Task<IActionResult> GetIngredient(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "recipe/{nationality:alpha}/{id}")]
-            HttpRequest req, string id, string nationality)
+            HttpRequest req, string id, string nationality, CancellationToken cancellationToken)
         {
-            var response = await _recipeRepository.GetRecipe(id, nationality);
+            var request = new GetRecipeRequest(id, nationality);
 
-            if (response == null)
+            try
             {
-                return new NotFoundResult();
+                var response = await _mediator.Send(request, cancellationToken);
+                return new ObjectResult(response);
             }
-
-            return new OkObjectResult(response);
+            catch (ValidationException ex)
+            {
+                return ex.ToBadRequestResponse();
+            }
         }
     }
 }

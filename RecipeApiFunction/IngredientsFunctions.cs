@@ -1,6 +1,14 @@
+using Application.Common.Behaviours;
+using Application.Features.IngredientFeatures.CreateIngredient;
+using Application.Features.IngredientFeatures.GetAllIngredient;
+using Application.Features.IngredientFeatures.GetIngredient;
+using Application.Features.IngredientFeatures.GetIngredientsByCategory;
+using Domain.Entities;
+using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -8,23 +16,20 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using SharedLibrary.Models;
-using SharedLibrary.Repository;
-using SharedLibrary.Utilities;
-using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace RecipeApiFunction
 {
     public class IngredientsFunctions
     {
         private readonly ILogger<IngredientsFunctions> _logger;
-        private readonly IIngredientRepository _ingredientRepository;
+        private readonly IMediator _mediator;
 
-        public IngredientsFunctions(ILogger<IngredientsFunctions> log, IIngredientRepository ingredientRepository)
+        public IngredientsFunctions(IMediator mediator, ILogger<IngredientsFunctions> log)
         {
             _logger = log;
-            _ingredientRepository = ingredientRepository;
+            _mediator = mediator;
         }
 
         [FunctionName("AddIngredient")]
@@ -34,19 +39,17 @@ namespace RecipeApiFunction
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "text/plain", bodyType: typeof(string), Description = "The BadRequest response")]
         public async Task<IActionResult> PostIngredient(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "ingredient")] 
-            HttpRequest req)
+            CreateIngredientRequest req, CancellationToken cancellationToken)
         {
-             var validRequest = RequestValidationUtilities.ValidateRequest<Ingredient>(req, out var ingredient);
-             if (!validRequest)
-             {
-                 return new BadRequestObjectResult("Invalid request. Body must contain an ingredient");
-             }
-
-             ingredient.Id ??= Guid.NewGuid().ToString();
-
-             var response = await _ingredientRepository.AddIngredient(ingredient);
-
-             return new OkObjectResult(response); 
+            try
+            {
+                var response = await _mediator.Send(req, cancellationToken);
+                return new OkObjectResult(response);
+            }
+            catch (ValidationException ex)
+            {
+                return ex.ToBadRequestResponse();
+            }
         }
 
         [FunctionName("GetAllIngredients")]
@@ -57,9 +60,10 @@ namespace RecipeApiFunction
             bodyType: typeof(List<Ingredient>), Description = "The OK response")]
         public async Task<IActionResult> GetIngredients(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient")]
-            HttpRequest req)
+            GetAllIngredientRequest req, CancellationToken cancellationToken)
         {
-            var response = await _ingredientRepository.GetAllIngredients();
+            var response = await _mediator.Send(req, cancellationToken);
+
             return new OkObjectResult(response);
         }
 
@@ -72,10 +76,18 @@ namespace RecipeApiFunction
         [OpenApiParameter("category", In = ParameterLocation.Path, Type = typeof(string), Description = "The **category** parameter", Required = true)]
         public async Task<IActionResult> GetIngredientsForCategory(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient/{category:alpha}")]
-            HttpRequest req, string category)
+            HttpRequest req, string category, CancellationToken cancellationToken)
         {
-            var response = await _ingredientRepository.GetIngredientCategory(category);
-            return new OkObjectResult(response);
+            var request = new GetIngredientsByCategoryRequest(category);
+            try
+            {
+                var response = await _mediator.Send(request, cancellationToken);
+                return new OkObjectResult(response);
+            }
+            catch (ValidationException ex)
+            {
+                return ex.ToBadRequestResponse();
+            }
         }
 
         [FunctionName("GetIngredientById")]
@@ -88,16 +100,19 @@ namespace RecipeApiFunction
         [OpenApiParameter("id", In = ParameterLocation.Path, Type = typeof(string), Description = "The **id** parameter", Required = true)]
         public async Task<IActionResult> GetIngredient(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ingredient/{category:alpha}/{id}")]
-            HttpRequest req, string id, string category)
+            HttpRequest req, string id, string category, CancellationToken cancellationToken)
         {
-            var response = await _ingredientRepository.GetIngredient(id, category);
+            var request = new GetIngredientRequest(id, category);
 
-            if (response == null)
+            try
             {
-                return new NotFoundResult();
+                var response = await _mediator.Send(request, cancellationToken);
+                return new OkObjectResult(response);
             }
-
-            return new OkObjectResult(response);
+            catch (ValidationException ex)
+            {
+                return ex.ToBadRequestResponse();
+            }
         }
     }
 }
