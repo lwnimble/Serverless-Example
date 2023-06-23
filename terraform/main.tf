@@ -135,4 +135,5 @@ resource "azurerm_api_management_subscription" "ui_subscription" {
   user_id             = azurerm_api_management_user.ui_user.id
   product_id          = azurerm_api_management_product.shopping_list_product.id
   display_name        = "UI Subscription"
+  state = "active"
 }
