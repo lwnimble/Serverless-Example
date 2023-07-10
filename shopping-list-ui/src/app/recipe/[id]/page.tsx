@@ -3,7 +3,7 @@ import { Recipe } from "@/types/recipe";
 import { GetServerSideProps } from "next";
 
 
-export default async function RecipePage( { searchParams }: {recipeId: string, nationality: string } ) {    
+export default async function RecipePage( { searchParams }: {searchParams: RecipePageParams } ) {    
     const recipeId = searchParams.recipeId;
     const nationality = searchParams.nationality;
     const recipe = await getRecipe(recipeId, nationality);
@@ -19,4 +19,9 @@ export default async function RecipePage( { searchParams }: {recipeId: string, n
             </div>
         </div>
     )
+}
+
+type RecipePageParams = {
+    recipeId: string,
+    nationality: string
 }
