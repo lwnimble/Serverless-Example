@@ -14,7 +14,7 @@ export function RecipeTile(  { recipe }: {recipe: Recipe}) {
             >
                 {recipe.name}
             </Link>
-        <h3>Nationality: {recipe.nationality}</h3>
+        <p>Nationality: {recipe.nationality}</p>
         <p>{recipe.description}</p>
     </div>
     );

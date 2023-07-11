@@ -1,12 +1,8 @@
-import { FormField, FormFieldProps } from "@/components/form-field/form-field";
+'use client'
+import { NewRecipeForm } from "@/components/new-recipe-form/new-recipe-form";
 
-const recipeNameProps: FormFieldProps = {id: "testId", title: "Recipe Name"};
-
-export default function NewRecipe() {
+export default function CreateRecipe() {
     return (
-            <form>
-                <FormField fieldProps={recipeNameProps}/>
-                <button type="submit">Submit</button>
-            </form>
+            <NewRecipeForm/>
     )
 }
