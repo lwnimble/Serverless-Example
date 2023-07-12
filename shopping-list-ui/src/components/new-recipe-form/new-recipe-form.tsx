@@ -1,11 +1,10 @@
-'use client'
 import { postRecipe } from "@/api-clients/recipe-client"
 import { useReducer } from "react"
 import { NewRecipe } from "@/types/new-recipe"
 import { RecipeFormFieldEvent } from "@/types/events/recipe-form-field-event";
 import { AddIngredient } from "../add-ingredient/add-ingredient";
-import { InputProps } from "@/types/props/input-props";
 import { TextInput } from "../text-input/text-input";
+import { RecipeUpdateType } from "@/enums/recipe-update-type";
 
 const defaultFormData: NewRecipe = {
     name: "",
@@ -18,19 +17,19 @@ const defaultFormData: NewRecipe = {
 const formReducer = (state: NewRecipe, event: RecipeFormFieldEvent) : NewRecipe  => {
     let updated: NewRecipe;
     switch (event.type) {
-        case "recipe-update":
+        case RecipeUpdateType.Update:
             updated = {
                 ...state,
                 [event.name]: event.value
             };
             break;
-        case "add-ingredient":
+        case RecipeUpdateType.AddIngredient:
             updated = {
                 ...state,
                 ingredients: [...state.ingredients, event.value]
             } as NewRecipe ;
             break;
-        case "reset":
+        case RecipeUpdateType.Reset:
             return defaultFormData;
         default:
             throw Error(`Unknown recipe event of ${event.type}`);
@@ -46,13 +45,13 @@ export function NewRecipeForm() {
         await postRecipe(formData);
         setFormData({
             name: "",
-            type: "reset"
+            type: RecipeUpdateType.Reset
         })
     };
 
     const handleChange = (event: React.ChangeEvent<any>) => {
         setFormData({
-            type: "recipe-update",
+            type: RecipeUpdateType.Update,
             name: event.target.name,
             value: event.target.value
         });

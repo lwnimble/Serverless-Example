@@ -1,7 +1,8 @@
+import { RecipeUpdateType } from "@/enums/recipe-update-type"
 import { Ingredient } from "../ingredient"
 
 export type RecipeFormFieldEvent = {
-    type: string
+    type: RecipeUpdateType
     name: string
     value?: string | number | Ingredient
 }

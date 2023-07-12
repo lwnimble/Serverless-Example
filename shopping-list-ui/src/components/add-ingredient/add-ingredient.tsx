@@ -4,6 +4,7 @@ import { Dispatch, useReducer } from 'react';
 import { TextInput } from "../text-input/text-input";
 import { NumberInput } from "../number-input/number-input";
 import { NewRecipe } from "@/types/new-recipe";
+import { RecipeUpdateType } from "@/enums/recipe-update-type";
 
 
 const newIngredient: Ingredient = {
@@ -13,7 +14,7 @@ const newIngredient: Ingredient = {
 }
 
 const ingredientReducer = (state: Ingredient, event: RecipeFormFieldEvent) => {
-    if (event.type === "reset") {
+    if (event.type === RecipeUpdateType.Reset) {
         return newIngredient;
     }
     return {
@@ -27,7 +28,7 @@ export function AddIngredient({ recipeData, setRecipeData }:{recipeData: NewReci
 
     const handleChange = (event: React.ChangeEvent<any>) => {
         setIngredientData({
-            type: "add-ingredient",
+            type: RecipeUpdateType.AddIngredient,
             name: event.target.name.split("-")[1], // gets name that matches the type
             value: event.target.value
         });
@@ -35,13 +36,13 @@ export function AddIngredient({ recipeData, setRecipeData }:{recipeData: NewReci
 
     const handleClick = () => {
         setRecipeData({
-            type: "add-ingredient",
+            type: RecipeUpdateType.AddIngredient,
             name: "ingredient",
             value: ingredientData
         })
         setIngredientData({
             name: "",
-            type: "reset"
+            type: RecipeUpdateType.Reset
         })
     }
 
