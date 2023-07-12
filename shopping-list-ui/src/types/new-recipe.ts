@@ -1,6 +1,6 @@
 import { Ingredient } from "./ingredient";
 
-export type PostRecipe = {
+export type NewRecipe = {
     url : string
     name: string
     description: string

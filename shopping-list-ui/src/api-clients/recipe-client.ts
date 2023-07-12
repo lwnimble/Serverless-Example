@@ -1,4 +1,4 @@
-import { PostRecipe } from "@/types/post-recipe";
+import { NewRecipe } from "@/types/new-recipe";
 import { Recipe } from "@/types/recipe";
 
 const api_url = process.env.NEXT_PUBLIC_API_URL;
@@ -25,7 +25,7 @@ export async function getRecipe(id: string, nationality: string) : Promise<Recip
     return await response.json() as Recipe;
 }
 
-export async function postRecipe(recipe: PostRecipe) : Promise<Recipe> {
+export async function postRecipe(recipe: NewRecipe) : Promise<Recipe> {
     const response = await fetch(`${api_url}/recipe`, {
         method: "POST",
         body: JSON.stringify(recipe),
