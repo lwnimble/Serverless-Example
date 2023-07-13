@@ -1,20 +1,8 @@
-export default function NewRecipe() {
+'use client'
+import { NewRecipeForm } from "@/components/new-recipe-form/new-recipe-form";
+
+export default function CreateRecipe() {
     return (
-        <div>
-            <table>
-                <thead>
-                    <tr>
-                    <th>One</th>
-                    <th>Two</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>hello</td>
-                        <td>world</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <NewRecipeForm/>
     )
 }

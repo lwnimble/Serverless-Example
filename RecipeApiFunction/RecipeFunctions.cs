@@ -5,6 +5,7 @@ using Application.Features.RecipeFeatures.GetRecipe;
 using Domain.Entities;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
