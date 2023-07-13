@@ -10,13 +10,13 @@ export default function RootLayout({children, home }: {children: React.ReactNode
         <header>
           <title>Shopping List Creator</title>
         </header>
-        <div className={styles.container}>
+    <div className={styles.container}>
           <h1>Shopping List Creator</h1>
-          <main>{children}</main>
-          <div className={styles.backToHome}>
-            <Link href="/">← Back to home</Link>
-          </div>
-        </div>
+      <main>{children}</main>
+        <div className={styles.backToHome}>
+          <Link href="/">← Back to home</Link>
+      </div>
+    </div>
       </body>
     </html>
   )
